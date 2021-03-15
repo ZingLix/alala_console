@@ -111,6 +111,7 @@ class Text extends Component<TextProps> {
       message.warn('至少存在一个条件');
       return;
     }
+    values.suitable_group = values.suitable_group.map((i: any) => parseInt(i));
     var url = '/api/rules';
     if (this.state.curId != '') {
       url += '/' + this.state.curId;
@@ -382,11 +383,18 @@ class Text extends Component<TextProps> {
                     <Slider min={0} max={100} style={{ width: '200px' }} />
                   </Form.Item>
                   <Form.Item label="适用群号" name="suitable_group" rules={[{ required: true }]}>
-                    <Select mode="tags"></Select>
+                    <Select mode="tags">
+                    </Select>
                   </Form.Item>
                   <Form.Item label=" " colon={false}>
                     <Button type="primary" htmlType="submit">
-                      添加
+                      {(() => {
+                        if (this.state.curId != "") {
+                          return "更新"
+                        } else {
+                          return "添加"
+                        }
+                      })()}
                     </Button>
                   </Form.Item>
                 </Form>
