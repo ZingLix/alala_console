@@ -22,13 +22,13 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import { RuleType } from './data';
+import { GroupType, RuleType } from './data';
 import ButtonGroup from 'antd/lib/button/button-group';
 import { ColumnProps } from 'antd/es/table';
 import ExprInput from './expression_input';
 import VarInput from './var_input';
 
-
+const { Option } = Select;
 const { confirm } = Modal;
 
 
@@ -36,7 +36,7 @@ function RulesManager() {
   const [rules, setRules] = useState([]);
   const [curId, setCurId] = useState("");
   const [form] = Form.useForm();
-
+  const [group, setGroup] = useState<GroupType[]>([]);
 
 
   const refreshData = () => {
@@ -47,6 +47,11 @@ function RulesManager() {
       .then(r => {
         setRules(r);
       });
+    fetch("/api/groups").then(r => {
+      return r.json()
+    }).then(r => {
+      setGroup(r)
+    });
   };
 
   useEffect(() => {
@@ -351,6 +356,9 @@ function RulesManager() {
                   </Form.Item>
                   <Form.Item label="适用群号" name="suitable_group" rules={[{ required: true }]}>
                     <Select mode="tags">
+                      {group.map((g, idx) => (
+                        <Option id={idx} value={g.id}>{g.id} ({g.name})</Option>
+                      ))}
                     </Select>
                   </Form.Item>
                   <Form.Item label=" " colon={false}>

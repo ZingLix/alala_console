@@ -8,23 +8,9 @@
 export default {
   dev: {
     '/api/': {
-      target: 'http://172.20.46.207:9999',
+      target: 'http://localhost:9999',
       changeOrigin: false,
       pathRewrite: { '^': '' },
     },
-  },
-  test: {
-    '/api/': {
-      target: 'https://alala.zinglix.xyz',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
-  },
-  pre: {
-    '/api/': {
-      target: 'http://172.20.46.207',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
-  },
+  }
 };
