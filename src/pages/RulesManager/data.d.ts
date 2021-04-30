@@ -18,9 +18,3 @@ export interface RuleType {
   }[];
   suitable_group: number[];
 }
-
-export interface GroupType {
-  id: number,
-  name: string,
-  permission: string
-}

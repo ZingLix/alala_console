@@ -26,6 +26,12 @@ export default [
     component: './RulesManager',
   },
   {
+    name: 'keywordsManager',
+    icon: 'smile',
+    path: '/keywords',
+    component: './KeywordsManager',
+  },
+  {
     component: './404',
   },
 ];

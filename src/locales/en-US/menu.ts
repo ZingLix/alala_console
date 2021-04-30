@@ -49,5 +49,6 @@ export default {
   'menu.editor.flow': 'Flow Editor',
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
-  'menu.ruleManager': "Rules Manager"
+  'menu.ruleManager': "Rules Manager",
+  'menu.keywordsManager': "Keywords Manager"
 };
