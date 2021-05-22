@@ -3,3 +3,9 @@ export interface GroupType {
     name: string,
     permission: string
 }
+
+export interface FriendType {
+    id: number;
+    nickname: string;
+    remark: string;
+}

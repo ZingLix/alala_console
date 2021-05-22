@@ -32,6 +32,12 @@ export default [
     component: './KeywordsManager',
   },
   {
+    name: 'biliMonitor',
+    icon: 'smile',
+    path: '/bilimonitor',
+    component: './BiliMonitor',
+  },
+  {
     component: './404',
   },
 ];

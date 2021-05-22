@@ -22,7 +22,8 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import { GroupType, RuleType } from './data';
+import { GroupType } from '../data';
+import { RuleType } from './data';
 import ButtonGroup from 'antd/lib/button/button-group';
 import { ColumnProps } from 'antd/es/table';
 import ExprInput from './expression_input';

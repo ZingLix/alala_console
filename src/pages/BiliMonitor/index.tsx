@@ -22,30 +22,30 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import { KeywordsRule } from './data';
+import { GroupType, FriendType } from '../data';
+import { BiliMonitorType } from './data';
 import ButtonGroup from 'antd/lib/button/button-group';
 import { ColumnProps } from 'antd/es/table';
-import { GroupType, FriendType } from '../data';
-
+import MessageInput from './msg_input'
 
 const { Option } = Select;
 const { confirm } = Modal;
 
 
-function KeywordsManager() {
-  const [keywords, setKeywords] = useState<KeywordsRule[]>([]);
+function BiliMonitor() {
+  const [mtrList, setMtrList] = useState<BiliMonitorType[]>([]);
   const [curId, setCurId] = useState("");
   const [form] = Form.useForm();
   const [group, setGroup] = useState<GroupType[]>([]);
   const [friend, setFriend] = useState<FriendType[]>([]);
 
   const refreshData = () => {
-    fetch('/api/keywords')
+    fetch('/api/bili_monitor')
       .then(r => {
         return r.json();
       })
       .then(r => {
-        setKeywords(r);
+        setMtrList(r);
       });
     fetch("/api/groups").then(r => {
       return r.json()
@@ -63,16 +63,17 @@ function KeywordsManager() {
     refreshData()
   }, []);
 
-  const setForm = (item: KeywordsRule) => {
+  const setForm = (item: BiliMonitorType) => {
     setCurId(item._id);
-
     form.setFieldsValue(item);
   };
 
-  const onFinish = (values: KeywordsRule) => {
-    console.log(values);
-    values.suitable_group = values.suitable_group.map((i: any) => parseInt(i));
-    var url = '/api/keywords';
+  const onFinish = (values: any) => {
+    values.subs_group = values.subs_group.map((i: any) => parseInt(i));
+    values.subs_user = values.subs_user.map((i: any) => parseInt(i));
+    values.uid = parseInt(values.uid)
+
+    var url = '/api/bili_monitor';
     if (curId != '') {
       url += '/' + curId;
     }
@@ -99,16 +100,16 @@ function KeywordsManager() {
       });
   };
 
-  const deleteRule = (rule: KeywordsRule) => {
+  const deleteRule = (rule: BiliMonitorType) => {
     confirm({
       title: '确认删除该规则？',
       icon: <ExclamationCircleOutlined />,
-      content: rule.name,
+      content: rule.rule_name,
       okText: '是',
       okType: 'danger',
       cancelText: '否',
       onOk: () => {
-        fetch('/api/rules/' + rule._id, {
+        fetch('/api/bili_monitor/' + rule._id, {
           method: 'DELETE',
         })
           .then(r => {
@@ -130,9 +131,29 @@ function KeywordsManager() {
   };
 
 
-  const columns: ColumnProps<KeywordsRule>[] = [
+  const columns: ColumnProps<BiliMonitorType>[] = [
     {
-      title: '名称',
+      title: '规则名称',
+      dataIndex: 'rule_name',
+      key: 'rule_name',
+      render: (text, record, index) => {
+        return (
+          <div
+            style={(() => {
+              if (record.disabled) {
+                return { color: 'red' };
+              } else {
+                return {};
+              }
+            })()}
+          >
+            {text}
+          </div>
+        );
+      },
+    },
+    {
+      title: 'UP主名称',
       dataIndex: 'name',
       key: 'name',
       render: (text, record, index) => {
@@ -145,7 +166,6 @@ function KeywordsManager() {
                 return {};
               }
             })()}
-            id={index.toString()}
           >
             {text}
           </div>
@@ -201,7 +221,7 @@ function KeywordsManager() {
             <Col span={8}>
               <Table
                 columns={columns}
-                dataSource={keywords}
+                dataSource={mtrList}
                 style={{ marginTop: '4px' }}
                 rowKey="_id"
                 rowClassName={(record, index) => {
@@ -227,23 +247,34 @@ function KeywordsManager() {
                   name="complex-form"
                   onFinish={onFinish}
                   initialValues={{
+                    rule_name: "",
                     name: "",
                     disabled: false,
-                    keywords: [],
-                    recall: false,
-                    mute_time: 0,
-                    unmute_list: [],
-                    suitable_group: []
+                    uid: "",
+                    send_msg: [],
+                    subs_user: [],
+                    subs_group: []
                   }}
                   form={form}
                   style={{ overflow: 'auto' }}
                 >
                   <Form.Item
                     label="规则名称"
-                    name="name"
+                    name="rule_name"
                     rules={[{ required: true }, { whitespace: false }]}
                   >
                     <Input></Input>
+                  </Form.Item>
+                  <Form.Item
+                    label="UP主 id"
+                    name="uid"
+                    extra={(() => {
+                      if (curId == "") return null;
+                      return form.getFieldValue("name");
+                    })()}
+                    rules={[{ required: true }]}
+                  >
+                    <InputNumber style={{ width: "100%" }}></InputNumber >
                   </Form.Item>
                   <Form.Item
                     label="停用"
@@ -253,37 +284,61 @@ function KeywordsManager() {
                   >
                     <Switch></Switch>
                   </Form.Item>
-                  <Form.Item label="关键词列表" name="keywords" rules={[{ required: true }]}>
-                    <Select mode="tags">
 
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    label="撤回"
-                    name="recall"
-                    valuePropName="checked"
-                    rules={[{ required: true }]}
-                  >
-                    <Switch></Switch>
-                  </Form.Item>
-                  <Form.Item
-                    label="禁言时长"
-                    name="mute_time"
-                    rules={[{ required: true }]}
-                  >
-                    <InputNumber></InputNumber>
-                  </Form.Item>
-                  <Form.Item label="取消禁言列表" name="unmute_list" >
+                  <Form.List name="send_msg">
+                    {(fields, { add, remove }) => {
+                      if (fields.length == 0) {
+                        add()
+                      }
+                      return (
+                        <div>
+                          {fields.map((field, index, list) => (
+
+                            <Form.Item label={'回复 #' + (index + 1)} key={index} rules={[{ required: true }]}>
+                              <Form.Item {...field} rules={[{
+                                validator: (rule, value) => {
+                                  if (value != undefined && value != "") {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject("请输入回复")
+                                }
+                              }]}>
+                                <MessageInput
+                                  onDelete={() => {
+                                    remove(field.name);
+                                  }}
+                                  couldDelete={fields.length == 1}
+                                ></MessageInput>
+                              </Form.Item>
+                            </Form.Item>
+                          ))}
+
+                          <Form.Item {...formItemLayoutWithOutLabel}>
+                            <Button
+                              type="dashed"
+                              onClick={() => {
+                                add();
+                              }}
+                              style={{ width: '60%' }}
+                            >
+                              <PlusOutlined /> 添加回复
+                            </Button>
+                          </Form.Item>
+                        </div>
+                      );
+                    }}
+                  </Form.List>
+                  <Form.Item label="订阅QQ" name="subs_user" >
                     <Select mode="tags">
                       {friend.map((g, idx) => (
                         <Option id={idx} value={g.id}>{g.id} ({g.nickname})</Option>
                       ))}
                     </Select>
                   </Form.Item>
-                  <Form.Item label="适用群号" name="suitable_group" rules={[{ required: true }]}>
+                  <Form.Item label="订阅群号" name="subs_group" >
                     <Select mode="tags">
                       {group.map((g, idx) => (
-                        <Option id={g.id} value={g.id}>{g.id} ({g.name})</Option>
+                        <Option id={idx} value={g.id}>{g.id} ({g.name})</Option>
                       ))}
                     </Select>
                   </Form.Item>
@@ -309,4 +364,4 @@ function KeywordsManager() {
 
 }
 
-export default KeywordsManager;
+export default BiliMonitor;

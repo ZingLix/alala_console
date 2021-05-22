@@ -50,5 +50,6 @@ export default {
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
   'menu.ruleManager': "规则管理",
-  'menu.keywordsManager': "关键词管理"
+  'menu.keywordsManager': "关键词管理",
+  'menu.biliMonitor': "B站更新监视"
 };
