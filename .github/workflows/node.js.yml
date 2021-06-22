@@ -34,5 +34,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-    - run: scp -r dist ${{ secrets.SERVER_DEPLOY_PATH }}
+    - name: Deploy
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        source: "dist"
+        target: ${{ secrets.DEPLOY_PATH }}
+        rm: True
       
