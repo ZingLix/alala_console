@@ -5,7 +5,7 @@ name: Continuous Deployment
 
 on:
   push:
-    branches: [ main ]
+    #branches: [ main ]
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
     - run: zip -r assets.zip dist
     
     - name: Release
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      #if: ${{ startsWith(github.ref, 'refs/tags/') }}
       uses: ncipollo/release-action@v1
       with:
         artifacts: "assets.zip"
