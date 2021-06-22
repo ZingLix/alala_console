@@ -25,3 +25,11 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: yarn
     - run: yarn build
+    - run: zip -r dist.zip dist
+    
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
