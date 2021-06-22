@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    #branches: [ main ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -33,3 +33,6 @@ jobs:
         files: dist.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - run: scp -r dist ${{ secrets.SERVER_DEPLOY_PATH }}
+      
