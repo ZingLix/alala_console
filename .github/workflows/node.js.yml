@@ -42,5 +42,6 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         source: "dist"
         target: ${{ secrets.DEPLOY_PATH }}
+        strip_components: 1
         rm: True
       
