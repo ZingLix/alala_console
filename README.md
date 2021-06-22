@@ -1,6 +1,8 @@
-# Ant Design Pro
+# alala 控制台
 
-This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
+[![Continuous Deployment](https://github.com/ZingLix/alala_console/actions/workflows/node.js.yml/badge.svg?branch=main)](https://github.com/ZingLix/alala_console/actions/workflows/node.js.yml)
+
+Working in progres...
 
 ## Environment Prepare
 
