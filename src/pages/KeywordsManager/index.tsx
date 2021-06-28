@@ -108,7 +108,7 @@ function KeywordsManager() {
       okType: 'danger',
       cancelText: '否',
       onOk: () => {
-        fetch('/api/rules/' + rule._id, {
+        fetch('/api/keywords/' + rule._id, {
           method: 'DELETE',
         })
           .then(r => {
