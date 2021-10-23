@@ -342,6 +342,9 @@ function BiliMonitor() {
                       ))}
                     </Select>
                   </Form.Item>
+                  <Form.Item label="创建者">
+                    {form.getFieldValue("creator")}
+                  </Form.Item>
                   <Form.Item label=" " colon={false}>
                     <Button type="primary" htmlType="submit">
                       {(() => {

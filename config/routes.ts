@@ -38,6 +38,12 @@ export default [
     component: './BiliMonitor',
   },
   {
+    name: 'permissionManager',
+    icon: 'smile',
+    path: '/permission',
+    component: './PermissionManager',
+  },
+  {
     component: './404',
   },
 ];

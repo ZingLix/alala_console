@@ -7,4 +7,5 @@ export interface KeywordsRule {
   mute_time: number;
   unmute_list: number[];
   suitable_group: number[];
+  creator: string;
 }

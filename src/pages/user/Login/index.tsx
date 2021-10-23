@@ -6,7 +6,7 @@ import {
   UserOutlined,
   WeiboCircleOutlined,
 } from '@ant-design/icons';
-import { Alert, Space, message, Tabs } from 'antd';
+import { Alert, Space, message, Tabs, Button } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
@@ -43,6 +43,7 @@ const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
+  const [form] = ProForm.useForm();
 
   const intl = useIntl();
 
@@ -69,6 +70,7 @@ const Login: React.FC = () => {
       }
       // 如果失败去设置用户错误信息
       setUserLoginState(msg);
+      throw "";
     } catch (error) {
       message.error('登录失败，请重试！');
     }
@@ -111,6 +113,7 @@ const Login: React.FC = () => {
                 },
               },
             }}
+            form={form}
             onFinish={async (values) => {
               handleSubmit(values as API.LoginParams);
             }}
@@ -194,6 +197,24 @@ const Login: React.FC = () => {
               </ProFormCheckbox>
 
             </div>
+            <Button style={{ width: "100%", marginBottom: "20px" }} onClick={() => {
+              form.validateFields().then(val => {
+                fetch("/api/user/register", {
+                  method: 'POST',
+                  body: JSON.stringify(val),
+                  headers: {
+                    'content-type': "application/json"
+                  }
+                }).then(r => {
+                  if (r.ok) {
+                    message.success("注册成功")
+                    return;
+                  }
+                  r.json().then(r => message.error(r.error));
+
+                })
+              })
+            }}>注册</Button>
           </ProForm>
 
         </div>
