@@ -294,7 +294,25 @@ function BiliMonitor() {
                         <div>
                           {fields.map((field, index, list) => (
 
-                            <Form.Item label={'回复 #' + (index + 1)} key={index} rules={[{ required: true }]}>
+                            <Form.Item label={'回复 #' + (index + 1)} key={index} rules={[{ required: true }]} tooltip={<div>
+                              bvid:   视频id
+                              <br />
+                              url:   视频链接
+                              <br />
+                              title:   视频标题
+                              <br />
+                              author:   作者
+                              <br />
+                              description:   描述
+                              <br />
+                              length:   时长
+                              <br />
+                              newline:   换行
+                              <br />
+                              comment:   评论数
+                              <br />
+                              play:   播放数
+                            </div>}>
                               <Form.Item {...field} rules={[{
                                 validator: (rule, value) => {
                                   if (value != undefined && value != "") {

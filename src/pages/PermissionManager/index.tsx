@@ -39,6 +39,7 @@ function PermissionManager() {
   const [form] = Form.useForm();
   const [group, setGroup] = useState<GroupType[]>([]);
   const [friend, setFriend] = useState<FriendType[]>([]);
+  const [role, setRole] = useState<PermissionType | null>(null);
 
   const refreshData = () => {
     fetch('/api/permission')
@@ -59,6 +60,10 @@ function PermissionManager() {
     }).then(r => {
       setFriend(r)
     })
+    fetch('/api/self_permission')
+      .then(r => r.json())
+      .then(r => setRole(r)
+      )
   };
 
   useEffect(() => {
@@ -197,21 +202,21 @@ function PermissionManager() {
                     }
                   </Form.Item>
                   <Form.Item label="相关 QQ" name="person" >
-                    <Select mode="tags" disabled={form.getFieldValue("role") != 0}>
+                    <Select mode="tags" disabled={role?.role != 0}>
                       {friend.map((g, idx) => (
                         <Option id={idx} value={g.id}>{g.id} ({g.nickname})</Option>
                       ))}
                     </Select>
                   </Form.Item>
                   <Form.Item label="相关群" name="group" >
-                    <Select mode="tags" disabled={form.getFieldValue("role") != 0}>
+                    <Select mode="tags" disabled={role?.role != 0}>
                       {group.map((g, idx) => (
                         <Option id={idx} value={g.id}>{g.id} ({g.name})</Option>
                       ))}
                     </Select>
                   </Form.Item>
                   <Form.Item label=" " colon={false}>
-                    <Button type="primary" htmlType="submit" disabled={form.getFieldValue("role") != 0}>
+                    <Button type="primary" htmlType="submit" disabled={role?.role != 0}>
                       {(() => {
                         if (curId != "") {
                           return "更新"
