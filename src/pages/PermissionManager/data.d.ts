@@ -3,4 +3,5 @@ export interface PermissionType {
   role: int;
   person: int[];
   group: int[];
+  key: string;
 }

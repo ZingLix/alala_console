@@ -28,6 +28,9 @@ import ButtonGroup from 'antd/lib/button/button-group';
 import { ColumnProps } from 'antd/es/table';
 import MessageInput from './msg_input'
 import { fromPairs } from '@umijs/deps/compiled/lodash';
+import {
+  SyncOutlined,
+} from '@ant-design/icons';
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -48,7 +51,11 @@ function PermissionManager() {
       })
       .then(r => {
         setMtrList(r);
-        setForm(r[0])
+        if (curId == "") {
+          setForm(r[0])
+        } else {
+          setForm(r.filter((x: any) => x.username == curId)[0])
+        }
       });
     fetch("/api/groups").then(r => {
       return r.json()
@@ -71,6 +78,7 @@ function PermissionManager() {
   }, []);
 
   const setForm = (item: PermissionType) => {
+    console.log(item)
     setCurId(item.username);
     form.setFieldsValue(item);
   };
@@ -194,7 +202,6 @@ function PermissionManager() {
                   //rules={[{ required: true }, { whitespace: false }]}
                   >
                     {((role) => {
-                      console.log(role)
                       if (role == 0) return "管理员"
                       else if (role == 1) return "普通用户"
                       else return "未知"
@@ -214,6 +221,22 @@ function PermissionManager() {
                         <Option id={idx} value={g.id}>{g.id} ({g.name})</Option>
                       ))}
                     </Select>
+                  </Form.Item>
+                  <Form.Item label="Key"  >
+                    {form.getFieldValue("key")}
+                    <SyncOutlined onClick={() => {
+                      fetch("/api/key/" + curId, {
+                        method: "POST"
+                      }).then(r => {
+                        if (r.ok) {
+                          refreshData()
+                        } else {
+                          r.json().then(r => {
+                            message.error(r['error'])
+                          })
+                        }
+                      })
+                    }} style={{ marginLeft: "4px" }} />
                   </Form.Item>
                   <Form.Item label=" " colon={false}>
                     <Button type="primary" htmlType="submit" disabled={role?.role != 0}>
