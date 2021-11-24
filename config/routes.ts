@@ -44,6 +44,12 @@ export default [
     component: './PermissionManager',
   },
   {
+    name: 'apiManager',
+    icon: 'smile',
+    path: '/api_manager',
+    component: './APIManager',
+  },
+  {
     component: './404',
   },
 ];

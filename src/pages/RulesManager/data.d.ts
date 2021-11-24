@@ -16,5 +16,9 @@ export interface RuleType {
     varname: string;
     varlist: string[];
   }[];
+  api: {
+    name: string;
+    api_id: string;
+  }[];
   suitable_group: number[];
 }

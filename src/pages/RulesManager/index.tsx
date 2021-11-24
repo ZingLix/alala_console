@@ -28,6 +28,8 @@ import ButtonGroup from 'antd/lib/button/button-group';
 import { ColumnProps } from 'antd/es/table';
 import ExprInput from './expression_input';
 import VarInput from './var_input';
+import ApiInput from './api_input';
+import { APIType } from "../APIManager/data";
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -38,7 +40,7 @@ function RulesManager() {
   const [curId, setCurId] = useState("");
   const [form] = Form.useForm();
   const [group, setGroup] = useState<GroupType[]>([]);
-
+  const [api, setApi] = useState<APIType[]>([]);
 
   const refreshData = () => {
     fetch('/api/rules')
@@ -52,6 +54,11 @@ function RulesManager() {
       return r.json()
     }).then(r => {
       setGroup(r)
+    });
+    fetch("/api/api").then(r => {
+      return r.json()
+    }).then(r => {
+      setApi(r)
     });
   };
 
@@ -313,7 +320,7 @@ function RulesManager() {
                   <Form.Item
                     label="回复"
                     name="reply"
-                    rules={[{ required: true }, { whitespace: false }]}
+                    rules={[{ whitespace: false }]}
                   >
                     <Input></Input>
                   </Form.Item>
@@ -343,6 +350,39 @@ function RulesManager() {
                               style={{ width: '60%' }}
                             >
                               <PlusOutlined /> 添加变量
+                            </Button>
+                          </Form.Item>
+                        </div>
+                      );
+                    }}
+                  </Form.List>
+                  <Form.List name="api">
+                    {(fields, { add, remove }) => {
+                      return (
+                        <div>
+                          {fields.map((field, index, list) => (
+                            <Form.Item label={'API 变量 #' + (index + 1)} key={index}>
+                              <Form.Item {...field} rules={[{ validator: checkVar }]}>
+                                <ApiInput
+                                  onDelete={() => {
+                                    remove(field.name);
+                                  }}
+                                  api_list={api}
+                                  isFirst={index == 0}
+                                ></ApiInput>
+                              </Form.Item>
+                            </Form.Item>
+                          ))}
+
+                          <Form.Item {...formItemLayoutWithOutLabel}>
+                            <Button
+                              type="dashed"
+                              onClick={() => {
+                                add();
+                              }}
+                              style={{ width: '60%' }}
+                            >
+                              <PlusOutlined /> 添加 API 变量
                             </Button>
                           </Form.Item>
                         </div>

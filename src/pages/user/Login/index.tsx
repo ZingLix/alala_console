@@ -192,12 +192,12 @@ const Login: React.FC = () => {
                 marginBottom: 24,
               }}
             >
-              <ProFormCheckbox noStyle name="autoLogin">
+              {/* <ProFormCheckbox noStyle name="autoLogin">
                 <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
-              </ProFormCheckbox>
+              </ProFormCheckbox> */}
 
             </div>
-            <Button style={{ width: "100%", marginBottom: "20px" }} onClick={() => {
+            <Button style={{ width: "100%", marginBottom: "20px", height: "40px" }} onClick={() => {
               form.validateFields().then(val => {
                 fetch("/api/user/register", {
                   method: 'POST',
@@ -214,7 +214,10 @@ const Login: React.FC = () => {
 
                 })
               })
-            }}>注册</Button>
+            }}>{intl.formatMessage({
+              id: 'pages.login.registerAccount',
+              defaultMessage: '注册',
+            })}</Button>
           </ProForm>
 
         </div>

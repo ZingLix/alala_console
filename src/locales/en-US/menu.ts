@@ -50,5 +50,8 @@ export default {
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
   'menu.ruleManager': "Rules Manager",
-  'menu.keywordsManager': "Keywords Manager"
+  'menu.permissionManager': "Permission Manager",
+  'menu.keywordsManager': "Keywords Manager",
+  'menu.biliMonitor': "Bilibili Monitor",
+  'menu.apiManager': "API Manager"
 };
