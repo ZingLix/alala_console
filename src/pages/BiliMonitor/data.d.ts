@@ -1,6 +1,5 @@
 export interface BiliMonitorType {
   _id: string;
-  rule_name: string;
   name: string;
   disabled: boolean;
   uid: number;

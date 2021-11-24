@@ -104,7 +104,7 @@ function BiliMonitor() {
     confirm({
       title: '确认删除该规则？',
       icon: <ExclamationCircleOutlined />,
-      content: rule.rule_name,
+      content: rule.name,
       okText: '是',
       okType: 'danger',
       cancelText: '否',
@@ -132,26 +132,6 @@ function BiliMonitor() {
 
 
   const columns: ColumnProps<BiliMonitorType>[] = [
-    {
-      title: '规则名称',
-      dataIndex: 'rule_name',
-      key: 'rule_name',
-      render: (text, record, index) => {
-        return (
-          <div
-            style={(() => {
-              if (record.disabled) {
-                return { color: 'red' };
-              } else {
-                return {};
-              }
-            })()}
-          >
-            {text}
-          </div>
-        );
-      },
-    },
     {
       title: 'UP主名称',
       dataIndex: 'name',
@@ -258,13 +238,7 @@ function BiliMonitor() {
                   form={form}
                   style={{ overflow: 'auto' }}
                 >
-                  <Form.Item
-                    label="规则名称"
-                    name="rule_name"
-                    rules={[{ required: true }, { whitespace: false }]}
-                  >
-                    <Input></Input>
-                  </Form.Item>
+
                   <Form.Item
                     label="UP主 id"
                     name="uid"
