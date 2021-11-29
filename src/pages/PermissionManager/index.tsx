@@ -7,20 +7,21 @@ import {
   Form,
   Table,
   Select,
-  Switch,
-  Input,
+  Tooltip,
+  Skeleton,
   message,
   Typography,
   Modal,
+  Popconfirm
 } from 'antd';
 import React, { useState, Component, useEffect } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import styles from './index.less';
 import {
-  PlusOutlined,
+  SmileOutlined,
   EditOutlined,
-  DeleteOutlined,
-  ExclamationCircleOutlined,
+  SmileFilled,
+  CopyOutlined,
 } from '@ant-design/icons';
 import { GroupType, FriendType } from '../data';
 import { PermissionType } from './data';
@@ -43,6 +44,8 @@ function PermissionManager() {
   const [group, setGroup] = useState<GroupType[]>([]);
   const [friend, setFriend] = useState<FriendType[]>([]);
   const [role, setRole] = useState<PermissionType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const refreshData = () => {
     fetch('/api/permission')
@@ -54,8 +57,10 @@ function PermissionManager() {
         if (curId == "") {
           setForm(r[0])
         } else {
+          console.log("test")
           setForm(r.filter((x: any) => x.username == curId)[0])
         }
+        setLoading(false);
       });
     fetch("/api/groups").then(r => {
       return r.json()
@@ -175,81 +180,99 @@ function PermissionManager() {
             </Col>
             <Col span={16} style={{ paddingLeft: '16px' }}>
               <Card style={{ marginTop: '8px' }}>
-                <Form
-                  {...formItemLayout}
-                  name="complex-form"
-                  onFinish={onFinish}
-                  initialValues={{
-                    username: "",
-                    role: 2,
-                    person: [],
-                    group: []
-                  }}
-                  form={form}
-                  style={{ overflow: 'auto' }}
-                >
-                  <Form.Item
-                    label="用户名"
-                  //  name="username"
-                  //rules={[{ required: true }, { whitespace: false }]}
+                <Skeleton loading={loading}>
+                  <Form
+                    {...formItemLayout}
+                    name="complex-form"
+                    onFinish={onFinish}
+                    initialValues={{
+                      username: "",
+                      role: 2,
+                      person: [],
+                      group: []
+                    }}
+                    form={form}
+                    style={{ overflow: 'auto' }}
                   >
-                    {form.getFieldValue("username")}
-                  </Form.Item>
+                    <Form.Item
+                      label="用户名"
+                    //  name="username"
+                    //rules={[{ required: true }, { whitespace: false }]}
+                    >
+                      {form.getFieldValue("username")}
+                    </Form.Item>
 
-                  <Form.Item
-                    label="角色"
-                  //  name="rule_name"
-                  //rules={[{ required: true }, { whitespace: false }]}
-                  >
-                    {((role) => {
-                      if (role == 0) return "管理员"
-                      else if (role == 1) return "普通用户"
-                      else return "未知"
-                    })(form.getFieldValue("role"))
-                    }
-                  </Form.Item>
-                  <Form.Item label="相关 QQ" name="person" >
-                    <Select mode="tags" disabled={role?.role != 0}>
-                      {friend.map((g, idx) => (
-                        <Option id={idx} value={g.id}>{g.id} ({g.nickname})</Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  <Form.Item label="相关群" name="group" >
-                    <Select mode="tags" disabled={role?.role != 0}>
-                      {group.map((g, idx) => (
-                        <Option id={idx} value={g.id}>{g.id} ({g.name})</Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  <Form.Item label="Key"  >
-                    {form.getFieldValue("key")}
-                    <SyncOutlined onClick={() => {
-                      fetch("/api/key/" + curId, {
-                        method: "POST"
-                      }).then(r => {
-                        if (r.ok) {
-                          refreshData()
-                        } else {
-                          r.json().then(r => {
-                            message.error(r['error'])
-                          })
-                        }
-                      })
-                    }} style={{ marginLeft: "4px" }} />
-                  </Form.Item>
-                  <Form.Item label=" " colon={false}>
-                    <Button type="primary" htmlType="submit" disabled={role?.role != 0}>
-                      {(() => {
-                        if (curId != "") {
-                          return "更新"
-                        } else {
-                          return "添加"
-                        }
-                      })()}
-                    </Button>
-                  </Form.Item>
-                </Form>
+                    <Form.Item
+                      label="角色"
+                    //  name="rule_name"
+                    //rules={[{ required: true }, { whitespace: false }]}
+                    >
+                      {((role) => {
+                        if (role == 0) return "管理员"
+                        else if (role == 1) return "普通用户"
+                        else return "未知"
+                      })(form.getFieldValue("role"))
+                      }
+                    </Form.Item>
+                    <Form.Item label="相关 QQ" name="person" >
+                      <Select mode="tags" disabled={role?.role != 0}>
+                        {friend.map((g, idx) => (
+                          <Option id={idx} value={g.id}>{g.id} ({g.nickname})</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item label="相关群" name="group" >
+                      <Select mode="tags" disabled={role?.role != 0}>
+                        {group.map((g, idx) => (
+                          <Option id={idx} value={g.id}>{g.id} ({g.name})</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item label="Key"  >
+                      {form.getFieldValue("key")}
+
+                      <Popconfirm placement="top" title="确定要刷新key？" onConfirm={() => {
+                        fetch("/api/key/" + curId, {
+                          method: "POST"
+                        }).then(r => {
+                          if (r.ok) {
+                            setRefreshing(true)
+                            refreshData()
+                            message.success("刷新成功")
+                            setRefreshing(false)
+
+                          } else {
+                            r.json().then(r => {
+                              message.error(r['error'])
+                            })
+                          }
+                        })
+                      }}>
+                        <Tooltip placement="top" title="刷新">
+                          <SyncOutlined spin={refreshing} style={{ marginLeft: "8px" }} />
+                        </Tooltip>
+
+                      </Popconfirm >
+                      <Tooltip placement="top" title="复制">
+                        <CopyOutlined onClick={() => {
+                          navigator.clipboard.writeText(form.getFieldValue("key"))
+                          message.success("复制成功")
+                        }} style={{ marginLeft: "8px" }} />
+                      </Tooltip>
+                    </Form.Item>
+                    <Form.Item label=" " colon={false}>
+                      <Button type="primary" htmlType="submit" disabled={role?.role != 0}>
+                        {(() => {
+                          if (curId != "") {
+                            return "更新"
+                          } else {
+                            return "添加"
+                          }
+                        })()}
+                      </Button>
+                    </Form.Item>
+                  </Form>
+                </Skeleton>
               </Card>
             </Col>
           </Row>
