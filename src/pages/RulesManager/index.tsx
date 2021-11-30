@@ -263,6 +263,7 @@ function RulesManager() {
                     name: '',
                     reply: '',
                     vars: [],
+                    api: [],
                     priority: 50,
                     disabled: false,
                     probability: 50,
